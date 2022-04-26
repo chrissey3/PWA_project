@@ -74,6 +74,7 @@ useEffect(()=>{
     <html lang="en">  
       <head>
         <Meta />
+        <link rel="manifest" href="/site.webmanifest"></link>
         <Links />
        
       </head>
