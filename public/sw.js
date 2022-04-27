@@ -1,14 +1,13 @@
 self.addEventListener("fetch", (event) => {
     let url = new URL(event.request.url);
     let method = event.request.method;
-  
+    console.log("service worker fetched");
     // any non GET request is ignored
     if (method.toLowerCase() !== "get") return;
   
     // If the request is for the favicons, fonts, or the built files (which are hashed in the name)
     if (
       url.pathname.startsWith("/favicons/") ||
-      url.pathname.startsWith("/fonts/") ||
       url.pathname.startsWith("/build/")
     ) {
       event.respondWith(
