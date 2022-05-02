@@ -1,7 +1,7 @@
 import { Link, Form } from "remix";
 
 export default function ListItem({snippet}){
-  
+ 
     
     return(
       

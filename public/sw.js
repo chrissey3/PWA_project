@@ -3,10 +3,24 @@ addEventListener("install", (event) => {
     const cache = await caches.open("static-v1");
     console.log("service worker intalled after cached events");
     return cache.addAll(["/"]);
+
   };
   event.waitUntil(preCache());
+  
 });
 
+self.addEventListener("fetch", event => {
+    event.respondWith(
+      caches.match(event.request)
+      .then(cachedResponse => {
+        // It can update the cache to serve updated content on the next request
+          return cachedResponse || fetch(event.request);
+      }
+    )
+   )
+ });
+ 
+/*
 self.addEventListener("fetch", (event) => {
   let url = new URL(event.request.url);
   let method = event.request.method;
@@ -34,3 +48,4 @@ self.addEventListener("fetch", (event) => {
 
   return;
 });
+*/
