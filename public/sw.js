@@ -1,3 +1,4 @@
+
 addEventListener("install", (event) => {
   const preCache = async () => {
     const cache = await caches.open("static-v1");
