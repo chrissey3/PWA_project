@@ -1,20 +1,52 @@
-addEventListener("install", (event) => {
+self.addEventListener("install", (event) => {
   const preCache = async () => {
     const cache = await caches.open("static-v1");
     console.log("service worker intalled after cached events");
-    return cache.addAll(["/"]);
-
+    return cache.addAll(['/']);
+   
   };
   event.waitUntil(preCache());
   
 });
 
 self.addEventListener("fetch", event => {
+  
+  const method = event.request.method;
+  // any non GET request is ignored
+  if (method.toLowerCase() !== "get") return;
+
+  const offlineFetch = async () => {
+    const client = await self.clients.get(event.clientId);
+    console.log("client", client);
+    if(client){
+        client.postMessage('test');
+    }
+   }
+  
+    const snipCache = async () => {
+      const cache = await caches.open("snip");
+      return cache.add(event.request);
+     }
+  event.waitUntil(snipCache());
+
+  
+
     event.respondWith(
       caches.match(event.request)
       .then(cachedResponse => {
         // It can update the cache to serve updated content on the next request
-          return cachedResponse || fetch(event.request);
+        if(cachedResponse){
+          return cachedResponse;
+        }else{
+          fetch(event.request)
+          .then(function() {
+              console.log("ok");
+          }).catch(function() {
+              offlineFetch();
+          });
+      
+        }
+          
       }
     )
    )

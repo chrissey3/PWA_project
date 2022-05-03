@@ -24,12 +24,19 @@ console.log(snippet);
 return snippet;
 }
  
+export function test(data){
+  let snippet = '';
+  navigator.serviceWorker.addEventListener('message', event => {return snippet = {title: 'test'};});
+     
+   return snippet = data;
+  
 
+}
 
 
 export default function SnippetPage() {
-
-  const snippet = useLoaderData();
+  
+  const snippet = test(useLoaderData());
   const [body, setBody] = useState();
   const [title, setTitle] = useState();
 
@@ -43,6 +50,7 @@ export default function SnippetPage() {
   }
 
   
+    
   
   function updateBody(){
     const b = editorRef.current.getValue()
