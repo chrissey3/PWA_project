@@ -1,7 +1,11 @@
+
+
 self.addEventListener("install", (event) => {
   const preCache = async () => {
     const cache = await caches.open("static-v1");
     console.log("service worker intalled after cached events");
+    //return cache.addAll(['/android-chrome-192x192.png', '/build/_assets/tailwind-BZ5MT26M.css', '/build/_shared/chunk-36LOKUOO.js', '/build/_shared/chunk-BJNRD3YI.js', '/build/_shared/chunk-JD6FMBAD.js', '/build/_shared/chunk-JXSTSMXP.js', '/build/entry.client-BTXBOIIH.js', '/build/manifest-C095670B.js'	]);
+    
     return cache.addAll(['/']);
    
   };
@@ -15,13 +19,7 @@ self.addEventListener("fetch", event => {
   // any non GET request is ignored
   if (method.toLowerCase() !== "get") return;
 
-  const offlineFetch = async () => {
-    const client = await self.clients.get(event.clientId);
-    console.log("client", client);
-    if(client){
-        client.postMessage('test');
-    }
-   }
+  
   
     const snipCache = async () => {
       const cache = await caches.open("snip");
@@ -32,25 +30,12 @@ self.addEventListener("fetch", event => {
   
 
     event.respondWith(
-      caches.match(event.request)
-      .then(cachedResponse => {
-        // It can update the cache to serve updated content on the next request
-        if(cachedResponse){
-          return cachedResponse;
-        }else{
-          fetch(event.request)
-          .then(function() {
-              console.log("ok");
-          }).catch(function() {
-              offlineFetch();
-          });
       
-        }
-          
-      }
-    )
-   )
- });
+          caches.match(event.request).then(function (response) {
+            return response || fetch(event.request);
+          }),
+        );
+      });
  
 /*
 self.addEventListener("fetch", (event) => {

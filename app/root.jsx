@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 
 import { useLocation } from "react-router-dom";
 
@@ -42,6 +42,7 @@ export default function App() {
   const bodyRef = useRef();
   const url = useLocation();
   const snippets = useLoaderData();
+  const [check, setCheck] = useState();
 
   function dark() {
     if (typeof window !== "undefined") {

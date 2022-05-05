@@ -10,6 +10,9 @@ import Popup from 'reactjs-popup';
 export async function loader({ params }) {
   //
   let snippet;
+
+ 
+  
   const db = await connectDb();
   if(params.snippetId != "index"){
   
@@ -23,33 +26,33 @@ export async function loader({ params }) {
 console.log(snippet);
 return snippet;
 }
- 
-export function test(data){
-  let snippet = '';
-  navigator.serviceWorker.addEventListener('message', event => {return snippet = {title: 'test'};});
-     
-   return snippet = data;
-  
 
-}
+
+ 
+
+
 
 
 export default function SnippetPage() {
-  
-  const snippet = test(useLoaderData());
+  //window.addEventListener('offline', function(e) { handleOffline()});
+  //navigator.serviceWorker.addEventListener('message', event => {return true;});
+  let snippet = useLoaderData();
   const [body, setBody] = useState();
   const [title, setTitle] = useState();
+
+  
 
   const editorRef = useRef(null);
   const bodyUpdate = useRef(null);
   const titleUpdate = useRef(null);
   
+ 
 
   function handleEditorDidMount(editor, monaco) {
     editorRef.current = editor; 
   }
 
-  
+ 
     
   
   function updateBody(){
@@ -65,7 +68,7 @@ export default function SnippetPage() {
   
   
   useEffect(()=>{
-    
+   
     setBody(snippet.body);
     setTitle(snippet.title);
   },[snippet]);
