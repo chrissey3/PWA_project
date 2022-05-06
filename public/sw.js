@@ -9,7 +9,7 @@ self.addEventListener("install", (event) => {
   };
   event.waitUntil(preCache());
 });
-
+/*
 self.addEventListener("fetch", (event) => {
   const method = event.request.method;
   // any non GET request is ignored
@@ -21,10 +21,25 @@ self.addEventListener("fetch", (event) => {
   };
   event.waitUntil(snipCache());
 });
-
+*/
 self.addEventListener("fetch", (event) => {
   event.respondWith(
-    fetch(event.request).catch(async function () {
+    fetch(event.request).then((networkResponse) => {
+      if(networkResponse.ok){
+        console.log('ok');
+        const clonedResponse = networkResponse.clone();
+        event.waitUntil(
+          caches.open('snip')
+          .then((cache) => cache.put(event.request, clonedResponse))
+        );
+        
+      }
+      return networkResponse;
+    })
+    
+    
+    
+    .catch(async function () {
       return caches.match(event.request);
       /*         .then(async function (response){
           if (response !== undefined) {

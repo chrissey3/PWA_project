@@ -76,7 +76,7 @@ export default function SnippetPage() {
     setTitle(e.value);
    
  }
-  
+ 
   
   useEffect(()=>{
    

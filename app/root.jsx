@@ -11,6 +11,7 @@ import {
   Scripts,
   ScrollRestoration,
   useLoaderData,
+  useCatch,
 } from "remix";
 import styles from "~/tailwind.css";
 import connectDb from "~/db/connectDb.server.js";
@@ -121,4 +122,18 @@ export default function App() {
       </body>
     </html>
   );
+}
+
+export function CatchBoundary(){
+  const card = useCatch();
+  return (
+    <div>{card.status} {card.statusText}</div>
+    //Error layout
+  )
+}
+
+export function ErrorBoundary({error}){
+ return(
+   <div>{error.message}</div>
+ )
 }
