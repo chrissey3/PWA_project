@@ -1,4 +1,4 @@
-import { useLoaderData, Form } from "remix";
+import { useLoaderData, Form, useCatch } from "remix";
 import connectDb from "~/db/connectDb.server.js";
 import { useEffect, useState, useRef } from "react";
 
@@ -28,7 +28,18 @@ return snippet;
 }
 
 
- 
+ export function CatchBoundary(){
+   const card = useCatch();
+   return (
+     <div>{card.status} {card.statusText}</div>
+   )
+ }
+
+ export function ErrorBoundary({error}){
+  return(
+    <div>{error.message}</div>
+  )
+ }
 
 
 

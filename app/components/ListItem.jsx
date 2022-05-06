@@ -6,15 +6,7 @@ export default function ListItem({snippet}){
 
 
 
-useEffect(()=>{
-  if(navigator.onLine){
-    if(check == 'off'){
-    setCheck(check.slice('off'));
-  }
-  }else{
-    setCheck('off');
-  }
-});
+
     
     return(
       
