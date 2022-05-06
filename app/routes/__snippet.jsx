@@ -80,6 +80,12 @@ export async function loader({request}){
   
 }
 
+export function ErrorBoundary({error}){
+  return(
+    <div>{error.message}</div>
+  )
+ }
+
 
  
 

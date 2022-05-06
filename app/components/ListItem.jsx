@@ -1,14 +1,21 @@
 import { Link, Form } from "remix";
+import { useEffect, useState } from "react";
 
 export default function ListItem({snippet}){
-  
+ const [check, setCheck] = useState();
+
+
+
+
     
     return(
       
       <div className="my-1" >
         
       <div className="mx-2 py-4 rounded flex justify-between">
-      <Link to={`/${snippet._id}`}>
+       
+      
+      <Link to={check ? `/snippetOff` : `/${snippet._id}`}>
       <div className="flex justify-between mx-5  ">
       <h2 className="font-semibold dark:text-white">{snippet.title}</h2>
       
@@ -20,6 +27,9 @@ export default function ListItem({snippet}){
       <div className=""><p className="text-sm font-semibold dark:text-white">{snippet.language}</p></div>
       </div>
       </Link>
+      
+      
+      
       <div className="flex justify-end">
       
       
