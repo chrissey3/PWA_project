@@ -65,7 +65,7 @@ export default function SnippetPage() {
   }, [snippet]);
 
   return (
-    <div className="h-full bg-sky-50">
+    <div className="h-screen bg-sky-50">
       <Form method="post" action="/requestHandler" className="h-1/5 flex justify-center items-center sm:block sm:h-fit">
         <div className="flex flex-col items-center sm:flex-row sm:justify-between dark:bg-stone-900">
           <div className="flex items-center justify-start">
@@ -193,7 +193,7 @@ export default function SnippetPage() {
         //<textarea className="resize-none h-screen w-full dark:bg-stone-400" id='code' value={body} name="body" onChange={updateBody}></textarea>
       }
 
-      <div className="h-4/5 sm:h-full">
+      <div className="h-4/5">
         <Editor
           defaultLanguage="javascript"
           height="100%"
