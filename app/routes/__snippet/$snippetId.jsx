@@ -55,15 +55,19 @@ export default function SnippetPage() {
     setTitle(e.value);
   }
 
+  function copy(text) {
+    navigator.clipboard.writeText(text);
+  }
+
   useEffect(() => {
     setBody(snippet.body);
     setTitle(snippet.title);
   }, [snippet]);
 
   return (
-    <div>
-      <Form method="post" action="/requestHandler">
-        <div className="flex justify-between dark:bg-stone-900">
+    <div className="h-full bg-sky-50">
+      <Form method="post" action="/requestHandler" className="h-1/5 flex justify-center items-center sm:block sm:h-fit">
+        <div className="flex flex-col items-center sm:flex-row sm:justify-between dark:bg-stone-900">
           <div className="flex items-center justify-start">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -189,10 +193,10 @@ export default function SnippetPage() {
         //<textarea className="resize-none h-screen w-full dark:bg-stone-400" id='code' value={body} name="body" onChange={updateBody}></textarea>
       }
 
-      <div>
+      <div className="h-4/5 sm:h-full">
         <Editor
-          height="100vh"
           defaultLanguage="javascript"
+          height="100%"
           value={body}
           onChange={updateBody}
           onMount={handleEditorDidMount}

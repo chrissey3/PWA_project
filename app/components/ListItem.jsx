@@ -12,7 +12,7 @@ export default function ListItem({snippet}){
       
       <div className="my-1" >
         
-      <div className="mx-2 py-4 rounded flex justify-between">
+      <div className="mx-2 py-4 rounded flex justify-between hover:bg-sky-200	">
        
       
       <Link to={check ? `/snippetOff` : `/${snippet._id}`}>
