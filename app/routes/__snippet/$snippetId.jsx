@@ -1,4 +1,4 @@
-import { useLoaderData, Form } from "remix";
+import { useLoaderData, Form, useCatch } from "remix";
 import connectDb from "~/db/connectDb.server.js";
 import { useEffect, useState, useRef } from "react";
 
@@ -18,8 +18,23 @@ export async function loader({ params }) {
   return snippet;
 }
 
+export function CatchBoundary() {
+  const card = useCatch();
+  return (
+    <div>
+      {card.status} {card.statusText}
+    </div>
+  );
+}
+
+export function ErrorBoundary({ error }) {
+  return <div>{error.message}</div>;
+}
+
 export default function SnippetPage() {
-  const snippet = useLoaderData();
+  //window.addEventListener('offline', function(e) { handleOffline()});
+  //navigator.serviceWorker.addEventListener('message', event => {return true;});
+  let snippet = useLoaderData();
   const [body, setBody] = useState();
   const [title, setTitle] = useState();
 
@@ -38,10 +53,6 @@ export default function SnippetPage() {
 
   function updateTitle(e) {
     setTitle(e.value);
-  }
-
-  function copy(text) {
-    navigator.clipboard.writeText(text);
   }
 
   useEffect(() => {

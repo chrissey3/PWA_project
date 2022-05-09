@@ -1,4 +1,4 @@
-import { useLoaderData, Outlet, Form, useSubmit } from "remix";
+import { useLoaderData, Outlet, Form, useSubmit, useCatch } from "remix";
 import ListItem from "~/components/ListItem";
 import Searchbar from "~/components/Searchbar";
 
@@ -79,6 +79,20 @@ export async function loader({request}){
 
   
 }
+
+export function CatchBoundary(){
+  const card = useCatch();
+  return (
+    <div>{card.status} {card.statusText}</div>
+  )
+}
+
+export function ErrorBoundary({error}){
+  return(
+    <div>{error.message}</div>
+    //Jacob lav noget pænt
+  )
+ }
 
 
  

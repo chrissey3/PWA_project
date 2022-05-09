@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 
 import { useLocation } from "react-router-dom";
 
@@ -11,6 +11,7 @@ import {
   Scripts,
   ScrollRestoration,
   useLoaderData,
+  useCatch,
 } from "remix";
 import styles from "~/tailwind.css";
 import connectDb from "~/db/connectDb.server.js";
@@ -42,6 +43,7 @@ export default function App() {
   const bodyRef = useRef();
   const url = useLocation();
   const snippets = useLoaderData();
+  const [check, setCheck] = useState();
 
   function dark() {
     if (typeof window !== "undefined") {
@@ -120,4 +122,18 @@ export default function App() {
       </body>
     </html>
   );
+}
+
+export function CatchBoundary(){
+  const card = useCatch();
+  return (
+    <div>{card.status} {card.statusText}</div>
+    //Error layout
+  )
+}
+
+export function ErrorBoundary({error}){
+ return(
+   <div>{error.message}</div>
+ )
 }

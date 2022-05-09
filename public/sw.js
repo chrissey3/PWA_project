@@ -1,13 +1,62 @@
-
-addEventListener("install", (event) => {
+self.addEventListener("install", (event) => {
   const preCache = async () => {
     const cache = await caches.open("static-v1");
+    const off = await caches.open("offline");
     console.log("service worker intalled after cached events");
+    //return cache.addAll(['/android-chrome-192x192.png', '/build/_assets/tailwind-BZ5MT26M.css', '/build/_shared/chunk-36LOKUOO.js', '/build/_shared/chunk-BJNRD3YI.js', '/build/_shared/chunk-JD6FMBAD.js', '/build/_shared/chunk-JXSTSMXP.js', '/build/entry.client-BTXBOIIH.js', '/build/manifest-C095670B.js'	]);
+    off.add("/snippetOff");
     return cache.addAll(["/"]);
   };
   event.waitUntil(preCache());
 });
+/*
+self.addEventListener("fetch", (event) => {
+  const method = event.request.method;
+  // any non GET request is ignored
+  if (method.toLowerCase() !== "get") return;
 
+  const snipCache = async () => {
+    const cache = await caches.open("snip");
+    return cache.add(event.request);
+  };
+  event.waitUntil(snipCache());
+});
+*/
+self.addEventListener("fetch", (event) => {
+  event.respondWith(
+    fetch(event.request).then((networkResponse) => {
+      if(networkResponse.ok){
+        console.log('ok');
+        const clonedResponse = networkResponse.clone();
+        event.waitUntil(
+          caches.open('snip')
+          .then((cache) => cache.put(event.request, clonedResponse))
+        );
+        
+      }
+      return networkResponse;
+    })
+    
+    
+    
+    .catch(async function () {
+      return caches.match(event.request);
+      /*         .then(async function (response){
+          if (response !== undefined) {
+               return response;
+          }else{
+       
+            return caches.match('/snippetOff');
+          }
+            
+            })
+         
+    */
+    })
+  );
+});
+
+/*
 self.addEventListener("fetch", (event) => {
   let url = new URL(event.request.url);
   let method = event.request.method;
@@ -35,3 +84,4 @@ self.addEventListener("fetch", (event) => {
 
   return;
 });
+*/

@@ -1,6 +1,18 @@
 import connectDb from "~/db/connectDb.server.js";
 import { redirect } from "remix";
 
+export default function NewPage(){
+  return (
+    <div>hej</div>
+  )
+}
+
+export function ErrorBoundary({error}){
+  return (
+    <div>njdvnjkdv {error.message}</div>
+  )
+}
+
 export async function action({request}){
   
 
