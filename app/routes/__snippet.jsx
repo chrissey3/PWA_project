@@ -1,6 +1,7 @@
 import { useLoaderData, Outlet, Form, useSubmit, useCatch } from "remix";
 import ListItem from "~/components/ListItem";
 import Searchbar from "~/components/Searchbar";
+import ErrorList from "~/components/ErrorList";
 
 import connectDb from "~/db/connectDb.server.js";
 
@@ -62,12 +63,16 @@ export function CatchBoundary() {
   );
 }
 
-export function ErrorBoundary({ error }) {
-  return (
-    <div>{error.message}</div>
-    //Jacob lav noget pænt
-  );
-}
+export function ErrorBoundary({error}){
+  return(
+   <ErrorList />
+  )
+ }
+
+
+ 
+
+
 
 export default function Index() {
   const submit = useSubmit();
