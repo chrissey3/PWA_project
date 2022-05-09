@@ -2,7 +2,6 @@ import { useRef, useEffect, useState } from "react";
 
 import { useLocation } from "react-router-dom";
 
-
 import {
   Links,
   Link,
@@ -38,13 +37,17 @@ export function meta() {
 
 
 
+export async function loader() {
+  const db = await connectDb();
+  const snippets = await db.models.Snip.distinct("language");
+  return snippets;
+}
 
-
-export default function App() {
+export default function ErrorLayout() {
   const bodyRef = useRef();
   const url = useLocation();
-  
-  
+  const snippets = useLoaderData();
+  const [check, setCheck] = useState();
 
   function dark() {
     if (typeof window !== "undefined") {
@@ -95,18 +98,16 @@ export default function App() {
         ref={bodyRef}
         className="bg-slate-100 text-slate-800 font-sans dark:bg-stone-700"
       >
-        <div className="flex flex-col sm:flex-row">
-          <div className="sm:w-1/5 bg-sky-100 dark:bg-stone-900 sm:h-screen">
-            <div className="bg-sky-200 p-1">
-              <h2 className="text-center p-4 text-2xl dark:text-white">
-                Languages
-              </h2>
-              <Link to={url.pathname}>
-                <Dark />
-              </Link>
-            </div>
+        <div className="flex">
+          <div className="w-1/5 bg-white dark:bg-stone-900">
+            <h2 className="text-center text-2xl m-4 dark:text-white">
+              Languages
+            </h2>
+            <Link to={url.pathname}>
+              <Dark />
+            </Link>
             <hr className="bg-zinc-400 shadow-lg dark:bg-white" />
-            <div className="py-1">
+            <div className=" bg-zinc-400 h-screen py-1 dark:bg-stone-700">
               <div className="my-3 mx-2">
                 
               </div>
@@ -121,18 +122,4 @@ export default function App() {
       </body>
     </html>
   );
-}
-
-export function CatchBoundary() {
-  const card = useCatch();
-  return (
-    <div>
-      {card.status} {card.statusText}
-    </div>
-    //Error layout
-  );
-}
-
-export function ErrorBoundary({ error }) {
-  return <div>{error.message}</div>;
 }
