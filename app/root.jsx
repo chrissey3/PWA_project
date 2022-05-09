@@ -33,6 +33,14 @@ export function meta() {
   };
 }
 
+
+
+export function ErrorBoundary({error}){
+ return(
+   <div>{error.message}</div>
+ )
+}
+
 export async function loader() {
   const db = await connectDb();
   const snippets = await db.models.Snip.distinct("language");

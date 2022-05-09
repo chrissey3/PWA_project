@@ -1,10 +1,10 @@
 self.addEventListener("install", (event) => {
   const preCache = async () => {
     const cache = await caches.open("static-v1");
-    const off = await caches.open("offline");
+    
     console.log("service worker intalled after cached events");
     //return cache.addAll(['/android-chrome-192x192.png', '/build/_assets/tailwind-BZ5MT26M.css', '/build/_shared/chunk-36LOKUOO.js', '/build/_shared/chunk-BJNRD3YI.js', '/build/_shared/chunk-JD6FMBAD.js', '/build/_shared/chunk-JXSTSMXP.js', '/build/entry.client-BTXBOIIH.js', '/build/manifest-C095670B.js'	]);
-    off.add("/snippetOff");
+    
     return cache.addAll(["/"]);
   };
   event.waitUntil(preCache());
