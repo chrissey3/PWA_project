@@ -1,46 +1,62 @@
-self.addEventListener("install", (event) => {
-  const preCache = async () => {
-    const cache = await caches.open("static-v1");
-    
-    console.log("service worker intalled after cached events");
-    //return cache.addAll(['/android-chrome-192x192.png', '/build/_assets/tailwind-BZ5MT26M.css', '/build/_shared/chunk-36LOKUOO.js', '/build/_shared/chunk-BJNRD3YI.js', '/build/_shared/chunk-JD6FMBAD.js', '/build/_shared/chunk-JXSTSMXP.js', '/build/entry.client-BTXBOIIH.js', '/build/manifest-C095670B.js'	]);
-    
-    return cache.addAll(["/"]);
-  };
-  event.waitUntil(preCache());
-});
-/*
-self.addEventListener("fetch", (event) => {
-  const method = event.request.method;
-  // any non GET request is ignored
-  if (method.toLowerCase() !== "get") return;
+const window = {};
+// TODO: This import needs to be manually updated on each build — can it be automated?
+self.importScripts("/build/manifest-0F478F03.js");
 
-  const snipCache = async () => {
-    const cache = await caches.open("snip");
-    return cache.add(event.request);
-  };
-  event.waitUntil(snipCache());
+const manifest = window.__remixManifest;
+
+const MANIFEST_CACHE = `assets-${manifest.version}`;
+
+
+const START_URL = "/";
+
+self.addEventListener("install", (event) => {
+  console.log(`SW installed, manifest version ${manifest.version}`);
+  const manifestUrls = parseUrlsFromManifest(manifest);
+  event.waitUntil(
+    caches.open(MANIFEST_CACHE).then((cache) => {
+      cache
+        .addAll([START_URL, ...manifestUrls])
+        .then(() => {
+          console.log(
+            `${manifestUrls.length} asset URLs from manifest version ${manifest.version} cached`
+          );
+        })
+        .catch((error) => {
+          console.log(
+            `FAILED to cache ${manifestUrls.length} asset URLs from manifest version ${manifest.version}:`,
+            error
+          );
+        });
+    })
+  );
 });
-*/
+
+
+
+
 self.addEventListener("fetch", (event) => {
+  
   event.respondWith(
     fetch(event.request).then((networkResponse) => {
       if(networkResponse.ok){
         console.log('ok');
         const clonedResponse = networkResponse.clone();
-        event.waitUntil(
+        
           caches.open('snip')
           .then((cache) => cache.put(event.request, clonedResponse))
-        );
+        
         
       }
       return networkResponse;
-    })
-    
-    
-    
-    .catch(async function () {
+    }).catch(async function () {
       return caches.match(event.request);
+
+    }))
+    
+    
+    
+    
+  });
       /*         .then(async function (response){
           if (response !== undefined) {
                return response;
@@ -51,11 +67,11 @@ self.addEventListener("fetch", (event) => {
             
             })
          
-    */
+    
     })
   );
 });
-
+*/
 /*
 self.addEventListener("fetch", (event) => {
   let url = new URL(event.request.url);
@@ -85,3 +101,16 @@ self.addEventListener("fetch", (event) => {
   return;
 });
 */
+
+function parseUrlsFromManifest(manifest) {
+  const modules = new Set();
+  const chunks = new Set();
+  const moduleObjects = [manifest.entry, ...Object.values(manifest.routes)];
+  moduleObjects.forEach((obj) => {
+    modules.add(obj.module);
+    obj.imports?.forEach((chunk) => {
+      chunks.add(chunk);
+    });
+  });
+  return [...modules, ...chunks, manifest.url];
+}

@@ -2,7 +2,6 @@ import { useRef, useEffect, useState } from "react";
 
 import { useLocation } from "react-router-dom";
 
-
 import {
   Links,
   Link,
@@ -38,13 +37,17 @@ export function meta() {
 
 
 
+export async function loader() {
+  const db = await connectDb();
+  const snippets = await db.models.Snip.distinct("language");
+  return snippets;
+}
 
-
-export default function App() {
+export default function ErrorLayout() {
   const bodyRef = useRef();
   const url = useLocation();
-  
-  
+  const snippets = useLoaderData();
+  const [check, setCheck] = useState();
 
   function dark() {
     if (typeof window !== "undefined") {
@@ -120,12 +123,3 @@ export default function App() {
     </html>
   );
 }
-
-export function CatchBoundary(){
-  const card = useCatch();
-  return (
-    <div>{card.status} {card.statusText}</div>
-    //Error layout
-  )
-}
-
