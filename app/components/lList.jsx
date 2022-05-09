@@ -2,7 +2,7 @@ import { Form } from "remix";
 
 export default function Llist({snip, location}){
     return(
-        <div className="my-3 bg-white dark:bg-stone-900">
+        <div className="my-3 hover:bg-sky-200 dark:bg-stone-900">
             <Form method="get" action={location}>
                 <button type="submit">
             <h2 className="mx-3 font-bold dark:text-white">{snip}</h2>
