@@ -65,7 +65,7 @@ export function CatchBoundary() {
 
 export function ErrorBoundary({error}){
   return(
-   <ErrorList />
+   <ErrorList error={error}/>
   )
  }
 
