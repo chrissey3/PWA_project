@@ -134,5 +134,5 @@ export function CatchBoundary() {
 }
 
 export function ErrorBoundary({ error }) {
-  return <div>{error.message}</div>;
+  return (<div>{error.message}</div>);
 }
