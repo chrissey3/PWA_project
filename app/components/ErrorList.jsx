@@ -5,7 +5,7 @@ import Searchbar from "~/components/Searchbar";
 
 
 
-export default function ErrorList(){
+export default function ErrorList({error}){
   
     return(
 <>
@@ -34,7 +34,7 @@ export default function ErrorList(){
 </ul>
 </div>
 <div className="sm:w-3/5 sm:h-screen">
-<Outlet />
+{error.message}
 
 </div>
 

@@ -1,6 +1,6 @@
 const window = {};
 // TODO: This import needs to be manually updated on each build — can it be automated?
-self.importScripts("/build/manifest-6020617A.js");
+self.importScripts("/build/manifest-5D60E771.js");
 
 const manifest = window.__remixManifest;
 
@@ -35,15 +35,19 @@ self.addEventListener("install", (event) => {
 
 
 self.addEventListener("fetch", (event) => {
-  
+  if (event.request.method !== "GET") {
+    return;
+  }
   event.respondWith(
     fetch(event.request).then((networkResponse) => {
       if(networkResponse.ok){
         console.log('ok');
         const clonedResponse = networkResponse.clone();
         
-          caches.open('snip')
-          event.waitUntil(((cache) => cache.put(event.request, clonedResponse)))
+          
+          event.waitUntil( 
+          caches.open('snip').then(cache => cache.put(event.request, clonedResponse))
+          )
         
         
       }
