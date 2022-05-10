@@ -5,17 +5,16 @@ import Searchbar from "~/components/Searchbar";
 
 
 
-
 export default function ErrorList(){
-    
+  
     return(
 <>
       
-<div className="w-1/5  border-x-2 h-screen bg-white dark:bg-stone-900">
-  <div className="flex p-4 shadow">
+<div className="sm:w-1/5 border-x-2 sm:h-screen bg-sky-50 dark:bg-stone-900">
+  <div className="sm:w-2/6 sm:flex sm:items-center ">
   <Searchbar />
  
- <Form>
+ <Form className="sm:w-2/6 sm:flex sm:items-center ">
  <select name="sort">
    <option value="all">all</option>
    <option value="asc">asc</option>
@@ -34,7 +33,7 @@ export default function ErrorList(){
  
 </ul>
 </div>
-<div className="w-3/5 ">
+<div className="sm:w-3/5 sm:h-screen">
 <Outlet />
 
 </div>
