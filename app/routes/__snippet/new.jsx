@@ -9,7 +9,7 @@ export default function NewPage(){
 
 export function ErrorBoundary({error}){
   return (
-    <div>njdvnjkdv {error.message}</div>
+    <div>test 2 {error.message}</div>
   )
 }
 

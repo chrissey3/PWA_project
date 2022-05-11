@@ -9,9 +9,10 @@ export default function ErrorList({error}){
   
     return(
 <>
-      
+
 <div className="sm:w-1/5 border-x-2 sm:h-screen bg-sky-50 dark:bg-stone-900">
   <div className="sm:w-2/6 sm:flex sm:items-center ">
+    
   <Searchbar />
  
  <Form className="sm:w-2/6 sm:flex sm:items-center ">
@@ -34,10 +35,11 @@ export default function ErrorList({error}){
 </ul>
 </div>
 <div className="sm:w-3/5 sm:h-screen">
-{error.message}
+
 
 </div>
 
 </>
 )
 }
+

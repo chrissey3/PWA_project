@@ -28,7 +28,10 @@ export function CatchBoundary() {
 }
 
 export function ErrorBoundary({ error }) {
-  return <div>{error.message}</div>;
+  return <div>
+  <p>It seems that you are offline :-( you can see files available on your left    
+  </p>
+  </div>;
 }
 
 export default function SnippetPage() {
