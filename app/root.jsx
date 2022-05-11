@@ -1,6 +1,7 @@
 import { useRef, useEffect, useState } from "react";
 
 import { useLocation } from "react-router-dom";
+import CatchBoundary from "~/components/CatchBoundary";
 
 
 import {
@@ -123,14 +124,6 @@ export default function App() {
   );
 }
 
-export function CatchBoundary() {
-  const card = useCatch();
-  return (
-    <div>
-      {card.status} {card.statusText}
-    </div>
-    //Error layout
-  );
-}
+export { CatchBoundary }
 
 

@@ -1,6 +1,7 @@
 import { useLoaderData, Form, useCatch } from "remix";
 import connectDb from "~/db/connectDb.server.js";
 import { useEffect, useState, useRef } from "react";
+import CatchBoundary from "~/components/CatchBoundary";
 
 import Editor from "@monaco-editor/react";
 import Popup from "reactjs-popup";
@@ -18,14 +19,7 @@ export async function loader({ params }) {
   return snippet;
 }
 
-export function CatchBoundary() {
-  const card = useCatch();
-  return (
-    <div>
-      {card.status} {card.statusText}
-    </div>
-  );
-}
+
 
 export function ErrorBoundary({ error }) {
   return <div>{error.message}</div>;
@@ -242,3 +236,4 @@ export default function SnippetPage() {
     </div>
   );
 }
+export { CatchBoundary }
