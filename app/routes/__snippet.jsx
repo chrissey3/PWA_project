@@ -1,13 +1,17 @@
-import { useLoaderData, Outlet, Form, useSubmit, useCatch } from "remix";
+import { useLoaderData, Outlet, Form, useSubmit, useCatch, json } from "remix";
 import ListItem from "~/components/ListItem";
 import Searchbar from "~/components/Searchbar";
 import ErrorList from "~/components/ErrorList";
+import CatchBoundary from "~/components/CatchBoundary";
 
 import connectDb from "~/db/connectDb.server.js";
 
 import { useLocation } from "react-router-dom";
 
-export async function loader({ request }) {
+
+export async function loader({ request}) {
+  
+  
   const url = new URL(await request.url);
   const sort = url.searchParams.get("sort");
   const search = url.searchParams.get("search");
@@ -51,17 +55,13 @@ export async function loader({ request }) {
       snippets = await db.models.Snip.find();
     }
   }
+  
   return snippets;
+  //const snip = await JSON.parse(r);
+  
 }
 
-export function CatchBoundary() {
-  const card = useCatch();
-  return (
-    <div>
-      {card.status} {card.statusText}
-    </div>
-  );
-}
+
 
 export function ErrorBoundary({error}){
   return(
@@ -103,6 +103,7 @@ export default function Index() {
         </div>
         <hr />
         <ul>
+         {console.log(snippets)}
           {snippets?.map((snip) => {
             console.log(snip.title);
 
@@ -116,3 +117,5 @@ export default function Index() {
     </>
   );
 }
+
+export { CatchBoundary }

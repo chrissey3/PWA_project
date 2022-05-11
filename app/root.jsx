@@ -1,6 +1,7 @@
 import { useRef, useEffect, useState } from "react";
 
 import { useLocation } from "react-router-dom";
+import CatchBoundary from "~/components/CatchBoundary";
 
 
 import {
@@ -43,6 +44,7 @@ export function meta() {
 export default function App() {
   const bodyRef = useRef();
   const url = useLocation();
+  
   
   
 
@@ -98,9 +100,10 @@ export default function App() {
         <div className="flex flex-col sm:flex-row">
           <div className="sm:w-1/5 bg-sky-100 dark:bg-stone-900 sm:h-screen">
             <div className="bg-sky-200 p-1">
-              <h2 className="text-center p-4 text-2xl dark:text-white">
+             <Link to={'/'}> <h2 className="text-center p-4 text-2xl dark:text-white">
                 Languages
               </h2>
+              </Link>
               <Link to={url.pathname}>
                 <Dark />
               </Link>
@@ -108,7 +111,7 @@ export default function App() {
             <hr className="bg-zinc-400 shadow-lg dark:bg-white" />
             <div className="py-1">
               <div className="my-3 mx-2">
-                
+            
               </div>
             </div>
           </div>
@@ -123,14 +126,6 @@ export default function App() {
   );
 }
 
-export function CatchBoundary() {
-  const card = useCatch();
-  return (
-    <div>
-      {card.status} {card.statusText}
-    </div>
-    //Error layout
-  );
-}
+export { CatchBoundary }
 
 

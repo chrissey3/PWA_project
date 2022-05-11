@@ -1,6 +1,7 @@
 import { useLoaderData, Form, useCatch } from "remix";
 import connectDb from "~/db/connectDb.server.js";
 import { useEffect, useState, useRef } from "react";
+import CatchBoundary from "~/components/CatchBoundary";
 
 import Editor from "@monaco-editor/react";
 import Popup from "reactjs-popup";
@@ -18,15 +19,6 @@ export async function loader({ params }) {
   return snippet;
 }
 
-export function CatchBoundary() {
-  const card = useCatch();
-  return (
-    <div>
-      {card.status} {card.statusText}
-    </div>
-  );
-}
-
 export function ErrorBoundary({ error }) {
   return <div>
   <p>It seems that you are offline :-( you can see files available on your left    
@@ -40,6 +32,9 @@ export default function SnippetPage() {
   let snippet = useLoaderData();
   const [body, setBody] = useState();
   const [title, setTitle] = useState();
+  const [visible, setVisible] = useState(false);
+  const [showUpdateText, setShowUpdateText] = useState(false);
+  const [showCopyText, setShowCopyText] = useState(false);
 
   const editorRef = useRef(null);
   const bodyUpdate = useRef(null);
@@ -60,16 +55,30 @@ export default function SnippetPage() {
 
   function copy(text) {
     navigator.clipboard.writeText(text);
+    setShowCopyText(true);
+  }
+
+  function closeDelete(event) {
+    event.stopPropagation();
+    setVisible(false);
   }
 
   useEffect(() => {
     setBody(snippet.body);
     setTitle(snippet.title);
+    setTimeout(() => {
+      setShowUpdateText(false);
+      setShowCopyText(false);
+    }, 1000);
   }, [snippet]);
 
   return (
     <div className="h-screen bg-sky-50">
-      <Form method="post" action="/requestHandler" className="h-1/5 flex justify-center items-center sm:block sm:h-fit">
+      <Form
+        method="post"
+        action="/requestHandler"
+        className="h-1/5 flex justify-center items-center sm:block sm:h-fit"
+      >
         <div className="flex flex-col items-center sm:flex-row sm:justify-between dark:bg-stone-900">
           <div className="flex items-center justify-start">
             <svg
@@ -95,10 +104,12 @@ export default function SnippetPage() {
                 onChange={updateTitle}
               ></input>
             </h1>
+
             <button
               type="button"
               onClick={() => copy(snippet.body)}
-              className="inline-block text-2x1 m-4 dark:text-white"
+              className="inline-block text-2x1 m-4 dark:text-white rounded hover:text-sky-200"
+              variant="contained"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -115,6 +126,7 @@ export default function SnippetPage() {
                 />
               </svg>
             </button>
+            {showCopyText ? "Snippet has been copied" : ""}
           </div>
           <div className="flex items-center">
             <input type="hidden" name="id" defaultValue={snippet._id}></input>
@@ -125,22 +137,37 @@ export default function SnippetPage() {
               defaultValue={body}
               name="body"
             ></input>
-            <button
-              name="toDo"
-              value="delete"
-              type="submit"
-              className="border rounded px-2 border-black bg-slate-400 mx-2 h-10"
+
+            <div
+              className="border rounded px-2 border-black bg-slate-400 mx-2 h-10 relative flex items-center cursor-pointer"
+              onClick={() => setVisible(true)}
             >
               Delete
-            </button>
-
+              {visible ? (
+                <div className="fixed top-20 right-10 border rounded px-5 py-5 z-10  bg-sky-100 flex flex-col text-center">
+                  <p>Are you Sure you want to Delete?</p>
+                  <button
+                    name="toDo"
+                    value="delete"
+                    type="submit"
+                    className="border rounded px-2 border-black bg-slate-400 mx-2 my-5 h-10"
+                  >
+                    Delete
+                  </button>
+                  <button type="button" onClick={closeDelete}>
+                    Cancel
+                  </button>
+                </div>
+              ) : null}
+            </div>
             <button
+              onClick={() => setShowUpdateText((show) => !show)}
               name="toDo"
               value="update"
               className="border rounded px-2 border-black bg-slate-400 mx-2 h-10"
               type="submit"
             >
-              Save
+              {showUpdateText ? "Saved!" : "Save"}
             </button>
 
             <Popup
@@ -208,3 +235,4 @@ export default function SnippetPage() {
     </div>
   );
 }
+export { CatchBoundary };
