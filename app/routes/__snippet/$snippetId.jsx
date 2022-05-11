@@ -1,4 +1,4 @@
-import { useLoaderData, Form, useCatch, redirect } from "remix";
+import { useLoaderData, Form, useCatch } from "remix";
 import connectDb from "~/db/connectDb.server.js";
 import { useEffect, useState, useRef } from "react";
 
@@ -37,7 +37,8 @@ export default function SnippetPage() {
   let snippet = useLoaderData();
   const [body, setBody] = useState();
   const [title, setTitle] = useState();
-
+  const [visible, setVisible] = useState(false);
+  const [showUpdateText, setShowUpdateText] = useState(false);
 
   const editorRef = useRef(null);
   const bodyUpdate = useRef(null);
@@ -60,11 +61,18 @@ export default function SnippetPage() {
     navigator.clipboard.writeText(text);
   }
 
+  function closeDelete(event) {
+    event.stopPropagation();
+    setVisible(false);
+  }
+
   useEffect(() => {
     setBody(snippet.body);
     setTitle(snippet.title);
+    setTimeout(() => {
+      setShowUpdateText(false);
+    }, 1000);
   }, [snippet]);
-
 
   return (
     <div className="h-screen bg-sky-50">
@@ -98,26 +106,34 @@ export default function SnippetPage() {
                 onChange={updateTitle}
               ></input>
             </h1>
-            <button
-              type="button"
-              onClick={() => copy(snippet.body)}
-              className="inline-block text-2x1 m-4 dark:text-white rounded hover:text-sky-300"
+            <Popup
+              trigger={
+                <button
+                  type="button"
+                  onClick={() => copy(snippet.body)}
+                  className="inline-block text-2x1 m-4 dark:text-white rounded hover:text-sky-200"
+                  variant="contained"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"
+                    />
+                  </svg>
+                </button>
+              }
+              position="right"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"
-                />
-              </svg>
-            </button>
+              Snippet has been copied
+            </Popup>
           </div>
           <div className="flex items-center">
             <input type="hidden" name="id" defaultValue={snippet._id}></input>
@@ -129,31 +145,36 @@ export default function SnippetPage() {
               name="body"
             ></input>
 
-            <div className="border rounded px-2 border-black bg-slate-400 mx-2 h-10 relative">
+            <div
+              className="border rounded px-2 border-black bg-slate-400 mx-2 h-10 relative flex items-center cursor-pointer"
+              onClick={() => setVisible(true)}
+            >
               Delete
-              <div className="fixed top-20 right-10 border rounded px-5 py-5 z-10  bg-sky-100 flex flex-col text-center">
-                <p>Are you Sure you want to Delete?</p>
-                <button
-                  name="toDo"
-                  value="delete"
-                  type="submit"
-                  className="border rounded px-2 border-black bg-slate-400 mx-2 h-10"
-                >
-                  Delete
-                </button>
-                <button name="toDo" value="cancel" type="submit">
-                  Cancel
-                </button>
-              </div>
+              {visible ? (
+                <div className="fixed top-20 right-10 border rounded px-5 py-5 z-10  bg-sky-100 flex flex-col text-center">
+                  <p>Are you Sure you want to Delete?</p>
+                  <button
+                    name="toDo"
+                    value="delete"
+                    type="submit"
+                    className="border rounded px-2 border-black bg-slate-400 mx-2 my-5 h-10"
+                  >
+                    Delete
+                  </button>
+                  <button type="button" onClick={closeDelete}>
+                    Cancel
+                  </button>
+                </div>
+              ) : null}
             </div>
-
             <button
+              onClick={() => setShowUpdateText((show) => !show)}
               name="toDo"
               value="update"
               className="border rounded px-2 border-black bg-slate-400 mx-2 h-10"
               type="submit"
             >
-              Save
+              {showUpdateText ? "Saved!" : "Save"}
             </button>
 
             <Popup

@@ -1,7 +1,7 @@
 import connectDb from "~/db/connectDb.server.js";
 import { redirect } from "remix";
 
-export async function action({ request }) {
+export async function action({ request, params }) {
   const formData = await request.formData();
   const db = await connectDb();
   const values = formData._fields;
@@ -10,6 +10,7 @@ export async function action({ request }) {
   const body = values.body[0];
   const title = values.title[0];
   const action = values.toDo[0];
+  
 
   if (action == "update") {
     if (filter) {
@@ -22,7 +23,6 @@ export async function action({ request }) {
         new: true
     });
     */
-      console.log(values);
       return redirect(`/${filter}`);
     } else {
       const snip = await db.models.Snip.create({
@@ -39,7 +39,5 @@ export async function action({ request }) {
     } else {
       return redirect(`/`);
     }
-  } else if (action == "cancel") {
-    return redirect(`/`);
   }
 }
