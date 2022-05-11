@@ -2,6 +2,7 @@ import { useLoaderData, Outlet, Form, useSubmit, useCatch } from "remix";
 import ListItem from "~/components/ListItem";
 import Searchbar from "~/components/Searchbar";
 import ErrorList from "~/components/ErrorList";
+import CatchBoundary from "~/components/CatchBoundary";
 
 import connectDb from "~/db/connectDb.server.js";
 
@@ -54,14 +55,7 @@ export async function loader({ request }) {
   return snippets;
 }
 
-export function CatchBoundary() {
-  const card = useCatch();
-  return (
-    <div>
-      {card.status} {card.statusText}
-    </div>
-  );
-}
+<CatchBoundary />
 
 export function ErrorBoundary({error}){
   return(

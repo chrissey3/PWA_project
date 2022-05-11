@@ -1,14 +1,16 @@
+// Declare a window object before importing the manifest file, which sets window.__remixManifest
 const window = {};
 // TODO: This import needs to be manually updated on each build — can it be automated?
-self.importScripts("/build/manifest-5D60E771.js");
+self.importScripts("/build/manifest-FE49F5CD.js");
 
 const manifest = window.__remixManifest;
 
+const START_URL = "/snippets";
+
 const MANIFEST_CACHE = `assets-${manifest.version}`;
+const DYNAMIC_CACHE = "dynamic-cache";
 
-
-const START_URL = "/";
-
+// INSTALL -----------------------------------------------------------
 self.addEventListener("install", (event) => {
   console.log(`SW installed, manifest version ${manifest.version}`);
   const manifestUrls = parseUrlsFromManifest(manifest);
@@ -31,83 +33,170 @@ self.addEventListener("install", (event) => {
   );
 });
 
-
-
-
-self.addEventListener("fetch", (event) => {
-  if (event.request.method !== "GET") {
-    return;
-  }
-  event.respondWith(
-    fetch(event.request).then((networkResponse) => {
-      if(networkResponse.ok){
-        console.log('ok');
-        const clonedResponse = networkResponse.clone();
-        
-          
-          event.waitUntil( 
-          caches.open('snip').then(cache => cache.put(event.request, clonedResponse))
+// ACTIVATE ----------------------------------------------------------
+self.addEventListener("activate", (event) => {
+  console.log(`SW activated, manifest version ${manifest.version}`);
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames
+          .filter(
+            (cacheName) =>
+              cacheName.startsWith("assets-") && cacheName !== MANIFEST_CACHE
           )
-        
-        
-      }
-      
-      return networkResponse;
-    }).catch(async function () {
-      return caches.match(event.request);
-      
-        
-    }))
-    
-    
-    
-    
-  });
-      /*         .then(async function (response){
-          if (response !== undefined) {
-               return response;
-          }else{
-       
-            return caches.match('/snippetOff');
-          }
-            
-            })
-         
-    
+          .map((cacheName) => {
+            console.log(`Deleting cache: ${cacheName}`);
+            return caches.delete(cacheName);
+          })
+      );
     })
   );
 });
-*/
-/*
+
+// FETCH -------------------------------------------------------------
 self.addEventListener("fetch", (event) => {
-  let url = new URL(event.request.url);
-  let method = event.request.method;
-  // any non GET request is ignored
-  if (method.toLowerCase() !== "get") return;
-  // If the request is for the favicons, fonts, or the built files (which are hashed in the name)
-  if (url.pathname.startsWith("/")) {
-    console.log("pathname fetched");
+  // We only want to handle GET requests
+  if (event.request.method !== "GET") {
+    return;
+  }
+
+  // HTML ------------------------------------------------------------
+  if (isHtmlRequest(event.request)) {
     event.respondWith(
-      // we will open the assets cache
-      caches.open("assets").then(async (cache) => {
-        // if the request is cached we will use the cache
-        let cacheResponse = await cache.match(event.request);
-        if (cacheResponse) return cacheResponse;
-
-        // if it's not cached we will run the fetch, cache it and return it
-        // this way the next time this asset it's needed it will load from the cache
-        let fetchResponse = await fetch(event.request);
-        cache.put(event.request, fetchResponse.clone());
-
-        return fetchResponse;
+      networkFallbackToCache(event).then((cachedResponse) => {
+        if (cachedResponse) {
+          return cachedResponse;
+        }
+        console.log(
+          `Cache miss for ${event.request.url}, redirecting to ${START_URL}`
+        );
+        return new Response(null, {
+          status: 302,
+          headers: {
+            Location: START_URL,
+          },
+        });
       })
     );
   }
 
-  return;
-});
-*/
+  // Build assets ----------------------------------------------------
+  if (isBuildRequest(event.request) && event.request.destination === "script") {
+    // Cached on install, should be in cache
+    event.respondWith(cacheFallbackToNetwork(event));
+  }
 
+  if (isBuildRequest(event.request) && event.request.destination === "style") {
+    event.respondWith(cacheFallbackToNetworkThenCache(event, DYNAMIC_CACHE));
+  }
+
+  // Loader requests -------------------------------------------------
+  if (isLoaderRequest(event.request)) {
+    event.respondWith(
+      networkThenCacheFallbackToCache(event, DYNAMIC_CACHE).then(
+        (cachedResponse) => {
+          if (cachedResponse) {
+            return cachedResponse;
+          }
+          console.log(
+            `Cache miss for ${event.request.url}, throwing offline response`
+          );
+          return new Response("You appear to be offline", {
+            status: 503,
+            statusText: "Network unavailable",
+            headers: {
+              "X-Remix-Catch": "yes",
+            },
+          });
+        }
+      )
+    );
+  }
+});
+
+// Request type identification ---------------------------------------
+function isHtmlRequest(request) {
+  return request.destination === "document";
+}
+
+function isBuildRequest(request) {
+  return request.url.includes("/build/");
+}
+
+function isLoaderRequest(request) {
+  const url = new URL(request.url);
+  return url.searchParams.has("_data");
+}
+
+// Caching strategies ------------------------------------------------
+async function cacheFallbackToNetwork(event) {
+  const request = event.request;
+  return caches.match(request).then((cachedResponse) => {
+    if (cachedResponse) {
+      console.log(`Cache hit for ${request.url}`);
+      return cachedResponse;
+    }
+    console.log(`Cache miss for ${request.url}`);
+    return fetch(request);
+  });
+}
+
+async function networkThenCacheFallbackToCache(event, cacheName) {
+  const request = event.request;
+  const url = request.url;
+  return fetch(request)
+    .then((networkResponse) => {
+      if (networkResponse.ok) {
+        console.log(`Caching ok response for ${url}`);
+        const clonedResponse = networkResponse.clone();
+        event.waitUntil(
+          caches
+            .open(cacheName)
+            .then((cache) => cache.put(request, clonedResponse))
+        );
+      }
+      return networkResponse;
+    })
+    .catch((error) => {
+      console.log(`Network fail for ${url}:`, error);
+      return caches.match(request);
+    });
+}
+
+async function networkFallbackToCache(event) {
+  const request = event.request;
+  const url = request.url;
+  return fetch(request).catch((error) => {
+    console.log(`Network fail for ${url}:`, error);
+    return caches.match(request);
+  });
+}
+
+async function cacheFallbackToNetworkThenCache(event, cacheName) {
+  const request = event.request;
+  const url = request.url;
+  return caches.match(request).then((cachedResponse) => {
+    if (cachedResponse) {
+      console.log(`Cache hit for ${url}`);
+      return cachedResponse;
+    }
+    console.log(`Cache miss for ${url}`);
+    return fetch(request).then((networkResponse) => {
+      if (networkResponse.ok) {
+        console.log(`Caching ok response for ${url}`);
+        const clonedResponse = networkResponse.clone();
+        event.waitUntil(
+          caches
+            .open(cacheName)
+            .then((cache) => cache.put(request, clonedResponse))
+        );
+      }
+      return networkResponse;
+    });
+  });
+}
+
+// Parse URLs from imported manifest ---------------------------------
 function parseUrlsFromManifest(manifest) {
   const modules = new Set();
   const chunks = new Set();
