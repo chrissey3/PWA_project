@@ -64,7 +64,7 @@ export default function CatchBoundary() {
               {offlineSnippets.map(({ _id, title }) => (
                 <li key={_id}>
                   <Link
-                    to={`/snippets/${_id}`}
+                    to={`/${_id}`}
                     className="block font-bold hover:underline">
                     {title}
                   </Link>

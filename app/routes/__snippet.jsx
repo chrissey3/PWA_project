@@ -8,7 +8,10 @@ import connectDb from "~/db/connectDb.server.js";
 
 import { useLocation } from "react-router-dom";
 
-export async function loader({ request }) {
+
+export async function loader({ request}) {
+  
+  
   const url = new URL(await request.url);
   const sort = url.searchParams.get("sort");
   const search = url.searchParams.get("search");
@@ -52,10 +55,13 @@ export async function loader({ request }) {
       snippets = await db.models.Snip.find();
     }
   }
+  
+  
+  //const snip = await JSON.parse(r);
   return snippets;
 }
 
-<CatchBoundary />
+
 
 export function ErrorBoundary({error}){
   return(
@@ -97,6 +103,7 @@ export default function Index() {
         </div>
         <hr />
         <ul>
+        
           {snippets?.map((snip) => {
             console.log(snip.title);
 
@@ -110,3 +117,5 @@ export default function Index() {
     </>
   );
 }
+
+export { CatchBoundary }

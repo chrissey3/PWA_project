@@ -19,7 +19,7 @@ export async function loader({ params }) {
   return snippet;
 }
 
-<CatchBoundary />
+
 
 export function ErrorBoundary({ error }) {
   return <div>{error.message}</div>;
@@ -199,3 +199,4 @@ export default function SnippetPage() {
     </div>
   );
 }
+export { CatchBoundary }

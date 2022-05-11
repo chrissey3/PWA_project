@@ -5,7 +5,7 @@ self.importScripts("/build/manifest-FE49F5CD.js");
 
 const manifest = window.__remixManifest;
 
-const START_URL = "/snippets";
+const START_URL = "/";
 
 const MANIFEST_CACHE = `assets-${manifest.version}`;
 const DYNAMIC_CACHE = "dynamic-cache";
