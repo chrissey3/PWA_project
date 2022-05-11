@@ -1,4 +1,4 @@
-import { useLoaderData, Outlet, Form, useSubmit, useCatch } from "remix";
+import { useLoaderData, Outlet, Form, useSubmit, useCatch, json } from "remix";
 import ListItem from "~/components/ListItem";
 import Searchbar from "~/components/Searchbar";
 import ErrorList from "~/components/ErrorList";
@@ -56,9 +56,9 @@ export async function loader({ request}) {
     }
   }
   
-  
-  //const snip = await JSON.parse(r);
   return snippets;
+  //const snip = await JSON.parse(r);
+  
 }
 
 
@@ -103,7 +103,7 @@ export default function Index() {
         </div>
         <hr />
         <ul>
-        
+         {console.log(snippets)}
           {snippets?.map((snip) => {
             console.log(snip.title);
 
