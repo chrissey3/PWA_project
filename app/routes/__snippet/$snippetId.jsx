@@ -19,8 +19,6 @@ export async function loader({ params }) {
   return snippet;
 }
 
-
-
 export function ErrorBoundary({ error }) {
   return <div>{error.message}</div>;
 }
@@ -33,6 +31,7 @@ export default function SnippetPage() {
   const [title, setTitle] = useState();
   const [visible, setVisible] = useState(false);
   const [showUpdateText, setShowUpdateText] = useState(false);
+  const [showCopyText, setShowCopyText] = useState(false);
 
   const editorRef = useRef(null);
   const bodyUpdate = useRef(null);
@@ -53,6 +52,7 @@ export default function SnippetPage() {
 
   function copy(text) {
     navigator.clipboard.writeText(text);
+    setShowCopyText(true);
   }
 
   function closeDelete(event) {
@@ -65,6 +65,7 @@ export default function SnippetPage() {
     setTitle(snippet.title);
     setTimeout(() => {
       setShowUpdateText(false);
+      setShowCopyText(false);
     }, 1000);
   }, [snippet]);
 
@@ -100,34 +101,29 @@ export default function SnippetPage() {
                 onChange={updateTitle}
               ></input>
             </h1>
-            <Popup
-              trigger={
-                <button
-                  type="button"
-                  onClick={() => copy(snippet.body)}
-                  className="inline-block text-2x1 m-4 dark:text-white rounded hover:text-sky-200"
-                  variant="contained"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"
-                    />
-                  </svg>
-                </button>
-              }
-              position="right"
+
+            <button
+              type="button"
+              onClick={() => copy(snippet.body)}
+              className="inline-block text-2x1 m-4 dark:text-white rounded hover:text-sky-200"
+              variant="contained"
             >
-              Snippet has been copied
-            </Popup>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"
+                />
+              </svg>
+            </button>
+            {showCopyText ? "Snippet has been copied" : ""}
           </div>
           <div className="flex items-center">
             <input type="hidden" name="id" defaultValue={snippet._id}></input>
@@ -236,4 +232,4 @@ export default function SnippetPage() {
     </div>
   );
 }
-export { CatchBoundary }
+export { CatchBoundary };
