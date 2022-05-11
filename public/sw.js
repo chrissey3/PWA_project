@@ -1,7 +1,7 @@
 // Declare a window object before importing the manifest file, which sets window.__remixManifest
 const window = {};
 // TODO: This import needs to be manually updated on each build — can it be automated?
-self.importScripts("/build/manifest-FE49F5CD.js");
+self.importScripts("/build/manifest-3BFF38B3.js");
 
 const manifest = window.__remixManifest;
 
@@ -14,6 +14,7 @@ const DYNAMIC_CACHE = "dynamic-cache";
 self.addEventListener("install", (event) => {
   console.log(`SW installed, manifest version ${manifest.version}`);
   const manifestUrls = parseUrlsFromManifest(manifest);
+  //open manifest cache and add assets
   event.waitUntil(
     caches.open(MANIFEST_CACHE).then((cache) => {
       cache
@@ -38,6 +39,7 @@ self.addEventListener("activate", (event) => {
   console.log(`SW activated, manifest version ${manifest.version}`);
   event.waitUntil(
     caches.keys().then((cacheNames) => {
+      //returns and filters out the old cached files 
       return Promise.all(
         cacheNames
           .filter(
@@ -61,6 +63,7 @@ self.addEventListener("fetch", (event) => {
   }
 
   // HTML ------------------------------------------------------------
+  //check if html files, first try to get from network, otherwise fallback to cache
   if (isHtmlRequest(event.request)) {
     event.respondWith(
       networkFallbackToCache(event).then((cachedResponse) => {
@@ -91,6 +94,7 @@ self.addEventListener("fetch", (event) => {
   }
 
   // Loader requests -------------------------------------------------
+  //checks if fetch request comes from our remix loader, fetch from network, clone response, if not, fetch from cache, if nothing respond with 503
   if (isLoaderRequest(event.request)) {
     event.respondWith(
       networkThenCacheFallbackToCache(event, DYNAMIC_CACHE).then(
@@ -104,6 +108,7 @@ self.addEventListener("fetch", (event) => {
           return new Response("You appear to be offline", {
             status: 503,
             statusText: "Network unavailable",
+            //needed for catch boundary to read it
             headers: {
               "X-Remix-Catch": "yes",
             },
@@ -129,6 +134,7 @@ function isLoaderRequest(request) {
 }
 
 // Caching strategies ------------------------------------------------
+//check in cache, if not, check in network
 async function cacheFallbackToNetwork(event) {
   const request = event.request;
   return caches.match(request).then((cachedResponse) => {
@@ -141,6 +147,7 @@ async function cacheFallbackToNetwork(event) {
   });
 }
 
+//check in network, clone request and put in cache, if not, check in cache
 async function networkThenCacheFallbackToCache(event, cacheName) {
   const request = event.request;
   const url = request.url;
@@ -163,6 +170,7 @@ async function networkThenCacheFallbackToCache(event, cacheName) {
     });
 }
 
+//fetch from network, if not, fetch from cache
 async function networkFallbackToCache(event) {
   const request = event.request;
   const url = request.url;
@@ -172,6 +180,7 @@ async function networkFallbackToCache(event) {
   });
 }
 
+//fetch from cache, if not, fetch from network, clone request and put in cache
 async function cacheFallbackToNetworkThenCache(event, cacheName) {
   const request = event.request;
   const url = request.url;
