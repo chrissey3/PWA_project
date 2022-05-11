@@ -1,4 +1,4 @@
-import { useLoaderData, Form, useCatch } from "remix";
+import { useLoaderData, Form, useCatch, redirect } from "remix";
 import connectDb from "~/db/connectDb.server.js";
 import { useEffect, useState, useRef } from "react";
 
@@ -38,6 +38,7 @@ export default function SnippetPage() {
   const [body, setBody] = useState();
   const [title, setTitle] = useState();
 
+
   const editorRef = useRef(null);
   const bodyUpdate = useRef(null);
   const titleUpdate = useRef(null);
@@ -64,9 +65,14 @@ export default function SnippetPage() {
     setTitle(snippet.title);
   }, [snippet]);
 
+
   return (
     <div className="h-screen bg-sky-50">
-      <Form method="post" action="/requestHandler" className="h-1/5 flex justify-center items-center sm:block sm:h-fit">
+      <Form
+        method="post"
+        action="/requestHandler"
+        className="h-1/5 flex justify-center items-center sm:block sm:h-fit"
+      >
         <div className="flex flex-col items-center sm:flex-row sm:justify-between dark:bg-stone-900">
           <div className="flex items-center justify-start">
             <svg
@@ -95,7 +101,7 @@ export default function SnippetPage() {
             <button
               type="button"
               onClick={() => copy(snippet.body)}
-              className="inline-block text-2x1 m-4 dark:text-white"
+              className="inline-block text-2x1 m-4 dark:text-white rounded hover:text-sky-300"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -122,14 +128,24 @@ export default function SnippetPage() {
               defaultValue={body}
               name="body"
             ></input>
-            <button
-              name="toDo"
-              value="delete"
-              type="submit"
-              className="border rounded px-2 border-black bg-slate-400 mx-2 h-10"
-            >
+
+            <div className="border rounded px-2 border-black bg-slate-400 mx-2 h-10 relative">
               Delete
-            </button>
+              <div className="fixed top-20 right-10 border rounded px-5 py-5 z-10  bg-sky-100 flex flex-col text-center">
+                <p>Are you Sure you want to Delete?</p>
+                <button
+                  name="toDo"
+                  value="delete"
+                  type="submit"
+                  className="border rounded px-2 border-black bg-slate-400 mx-2 h-10"
+                >
+                  Delete
+                </button>
+                <button name="toDo" value="cancel" type="submit">
+                  Cancel
+                </button>
+              </div>
+            </div>
 
             <button
               name="toDo"
