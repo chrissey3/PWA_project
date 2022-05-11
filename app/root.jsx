@@ -97,7 +97,7 @@ export default function App() {
       >
         <div className="flex flex-col sm:flex-row">
           <div className="sm:w-1/5 bg-sky-100 dark:bg-stone-900 sm:h-screen">
-            <div className="bg-sky-200 p-1">
+            <div className="bg-sky-200 p-1 dark:bg-stone-700">
               <h2 className="text-center p-4 text-2xl dark:text-white">
                 Languages
               </h2>
