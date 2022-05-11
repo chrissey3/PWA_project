@@ -36,11 +36,7 @@ export function meta() {
 }
 
 
-export async function loader(){
-  const db = await connectDb();
-  const snippets = await db.models.Snip.distinct('language');
-  return snippets;
-}
+
 
 
 
@@ -48,7 +44,7 @@ export async function loader(){
 export default function App() {
   const bodyRef = useRef();
   const url = useLocation();
-  const snippets = useLoaderData();
+  
   
   
 
@@ -115,13 +111,7 @@ export default function App() {
             <hr className="bg-zinc-400 shadow-lg dark:bg-white" />
             <div className="py-1">
               <div className="my-3 mx-2">
-              {snippets?.map((snip) => {
-         return(  
-       
-          <Llist snip={snip} key={snip} location={url.pathname}/>
-       )
-       
-      })}
+            
               </div>
             </div>
           </div>
