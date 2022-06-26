@@ -150,6 +150,7 @@ async function networkThenCacheFallbackToCache(event, cacheName) {
         console.log(`Caching ok response for ${url}`);
         const clonedResponse = networkResponse.clone();
         event.waitUntil(
+          console.log(request),
           caches
             .open(cacheName)
             .then((cache) => cache.put(request, clonedResponse))

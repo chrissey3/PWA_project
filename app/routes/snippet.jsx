@@ -1,4 +1,5 @@
 import { useLoaderData, Outlet, Form, useSubmit, useCatch, json } from "remix";
+import {useState} from "react";
 import ListItem from "~/components/ListItem";
 import Searchbar from "~/components/Searchbar";
 import ErrorList from "~/components/ErrorList";
@@ -19,6 +20,7 @@ export async function loader({ request}) {
   let snippets;
   const db = await connectDb();
 
+  
   if (lang != null) {
     snippets = await db.models.Snip.find({
       language: lang,
@@ -56,6 +58,8 @@ export async function loader({ request}) {
     }
   }
   
+ 
+  
   return snippets;
   //const snip = await JSON.parse(r);
   
@@ -65,7 +69,7 @@ export async function loader({ request}) {
 
 export function ErrorBoundary({error}){
   return(
-   <ErrorList error={error}/>
+   error.message
   )
  }
 
@@ -76,14 +80,18 @@ export function ErrorBoundary({error}){
 
 export default function Index() {
   const submit = useSubmit();
-
+  
   function handleChange(event) {
     submit(event.currentTarget, { replace: true });
   }
-
   const snippets = useLoaderData();
-
   const url = useLocation();
+
+
+
+  
+
+
   return (
     <>
       <div className="sm:w-1/5 border-x-2 sm:h-screen bg-sky-50 dark:bg-stone-900">
@@ -103,6 +111,7 @@ export default function Index() {
         </div>
         <hr />
         <ul>
+          
          {console.log(snippets)}
           {snippets?.map((snip) => {
             console.log(snip.title);
@@ -117,5 +126,6 @@ export default function Index() {
     </>
   );
 }
+
 
 export { CatchBoundary }

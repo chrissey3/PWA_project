@@ -1,6 +1,8 @@
 
-import { Link, useCatch } from "@remix-run/react";
+import { Link, useCatch, Form, Outlet } from "@remix-run/react";
 import { useEffect, useState } from "react";
+import ListItem from "~/components/ListItem";
+import Searchbar from "~/components/Searchbar";
 
 export default function CatchBoundary() {
   const caught = useCatch();
@@ -30,6 +32,8 @@ export default function CatchBoundary() {
           return {
             _id: body._id,
             title: body.title,
+            description: body.description,
+            language: body.language
           };
         })
       );
@@ -43,37 +47,31 @@ export default function CatchBoundary() {
   // Special case for offline viewing
   if (caught.status === 503) {
     return (
+      <>
+      
+<div className="sm:w-1/5 border-x-2 sm:h-screen bg-sky-50 dark:bg-stone-900">
+  <div className="sm:w-2/6 sm:flex sm:items-center ">
+ <h2>Snippets</h2>
+ <p>
+  You appear to be offline, here is a list of available snippets
+ </p>
+ </div>
+ <hr />
+ <ul>
+ {offlineSnippets.map((snip) => {
+return <ListItem snippet={snip} key={snip._id}/>
+})}
+ 
+ 
+</ul>
+</div>
+
+
       <div>
-        <div className="flex flex-row items-center gap-2">
-          
-          <h1 className="text-2xl font-bold">You appear to be offline</h1>
-        </div>
-        {offlineSnippets.length === 0 ? (
-          <p className="my-3">
-            This page is unavailable, and no snippets have been cached for
-            offline viewing, unfortunately. Try again when you regain
-            connectivity.
-          </p>
-        ) : (
-          <>
-            <p className="my-3">
-              This page is unavailable, but these snippets have been cached for
-              offline viewing, try one of them:
-            </p>
-            <ul className="my-3 pl-4 list-disc">
-              {offlineSnippets.map(({ _id, title }) => (
-                <li key={_id}>
-                  <Link
-                    to={`/${_id}`}
-                    className="block font-bold hover:underline">
-                    {title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </>
-        )}
+        
+        <Outlet />
       </div>
+      </>
     );
   }
   // Default CatchBoundary

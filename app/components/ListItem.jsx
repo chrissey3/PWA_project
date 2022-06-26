@@ -15,7 +15,7 @@ export default function ListItem({snippet}){
       <div className="mx-2 py-4 rounded flex justify-between hover:bg-sky-200	">
        
       
-      <Link to={`/${snippet._id}`}>
+      <Link to={`/snippet/${snippet._id}`}>
       <div className="flex justify-between mx-5  ">
       <h2 className="font-semibold dark:text-white">{snippet.title}</h2>
       
