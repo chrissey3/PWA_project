@@ -42,6 +42,7 @@ export default function CatchBoundary() {
     if (caught.status === 503) {
       getCachedSnippets();
     }
+
   }, [caught.status]);
 
   // Special case for offline viewing
@@ -49,17 +50,17 @@ export default function CatchBoundary() {
     return (
       <>
       
-<div className="sm:w-1/5 border-x-2 sm:h-screen bg-sky-50 dark:bg-stone-900">
-  <div className="sm:w-2/6 sm:flex sm:items-center ">
+      <div className=" border-x-2 sm:h-screen bg-sky-50 dark:bg-stone-900">
+        <div className="flex w-full p-4 shadow">
  <h2>Snippets</h2>
  <p>
-  You appear to be offline, here is a list of available snippets
+  You appear to be offline, this the available snippets
  </p>
  </div>
  <hr />
  <ul>
  {offlineSnippets.map((snip) => {
-return <ListItem snippet={snip} key={snip._id}/>
+return <><Link to={`/snippet/${snip._id}`} key={snip._id}>{snip.title}</Link><br></br></>
 })}
  
  
@@ -67,13 +68,15 @@ return <ListItem snippet={snip} key={snip._id}/>
 </div>
 
 
-      <div>
+  
         
-        <Outlet />
-      </div>
+      
+  
       </>
     );
   }
+
+  
   // Default CatchBoundary
   return (
     <div className="text-red-500 font-bold">

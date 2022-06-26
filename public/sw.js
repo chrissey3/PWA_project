@@ -5,7 +5,7 @@ self.importScripts("/build/manifest-FE49F5CD.js");
 
 const manifest = window.__remixManifest;
 
-const START_URL = "/";
+const START_URL = "/snippet";
 
 const MANIFEST_CACHE = `assets-${manifest.version}`;
 const DYNAMIC_CACHE = "dynamic-cache";
@@ -92,8 +92,10 @@ self.addEventListener("fetch", (event) => {
 
   // Loader requests -------------------------------------------------
   if (isLoaderRequest(event.request)) {
+    const url = event.request.url;
+  const arrUrl = event.request.referrer + "?_data=routes%2Fsnippet";
     event.respondWith(
-      networkThenCacheFallbackToCache(event, DYNAMIC_CACHE).then(
+      loaderCache(event, DYNAMIC_CACHE).then(
         (cachedResponse) => {
           if (cachedResponse) {
             return cachedResponse;
@@ -101,6 +103,7 @@ self.addEventListener("fetch", (event) => {
           console.log(
             `Cache miss for ${event.request.url}, throwing offline response`
           );
+        
           return new Response("You appear to be offline", {
             status: 503,
             statusText: "Network unavailable",
@@ -139,6 +142,38 @@ async function cacheFallbackToNetwork(event) {
     console.log(`Cache miss for ${request.url}`);
     return fetch(request);
   });
+}
+
+async function loaderCache(event, cacheName) {
+  const request = event.request;
+  const url = request.url;
+  const arrUrl = request.referrer + "?_data=routes%2Fsnippet";
+  console.log("test", arrUrl);
+  return fetch(request)
+    .then((networkResponse) => {
+      if (networkResponse.ok) {
+        console.log(`Caching ok response for ${url}`);
+        const clonedResponse = networkResponse.clone();
+        event.waitUntil(
+          console.log(request),
+          caches
+            .open(cacheName)
+            .then((cache) => cache.put(request, clonedResponse))
+          
+        );
+        event.waitUntil(
+          
+          caches
+        .open(cacheName)
+        .then((cache) => cache.add(`${arrUrl}`))
+        )
+      }
+      return networkResponse;
+    })
+    .catch((error) => {
+      console.log(`Network fail for ${url}:`, error);
+      return caches.match(request);
+    });
 }
 
 async function networkThenCacheFallbackToCache(event, cacheName) {

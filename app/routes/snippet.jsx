@@ -1,4 +1,4 @@
-import { useLoaderData, Outlet, Form, useSubmit, useCatch, json } from "remix";
+import { useLoaderData, Outlet, Form, useSubmit, useCatch, json, Link } from "remix";
 import {useState} from "react";
 import ListItem from "~/components/ListItem";
 import Searchbar from "~/components/Searchbar";
@@ -128,4 +128,4 @@ export default function Index() {
 }
 
 
-export { CatchBoundary }
+export { CatchBoundary };
